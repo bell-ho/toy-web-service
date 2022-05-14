@@ -6,10 +6,7 @@ import com.example.toywebservice.model.TodoEntity;
 import com.example.toywebservice.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +18,34 @@ public class TodoController {
 
     private final TodoService service;
 
+
+    @GetMapping
+    public ResponseEntity<?> retrieveTodoList() {
+        String temporaryUserId = "temporary-user";
+
+        List<TodoEntity> entities = service.retrieve(temporaryUserId);
+        List<TodoDTO> dtos = entities.stream().map(TodoDTO::new).collect(Collectors.toList());
+        ResponseDTO<TodoDTO> response = ResponseDTO.<TodoDTO>builder().data(dtos).build();
+        return ResponseEntity.ok().body(response);
+    }
+
+
+    @PutMapping
+    public ResponseEntity<?> updateTodo(@RequestBody TodoDTO dto) {
+        String temporaryUserId = "temporary-user";
+
+        TodoEntity entity = TodoDTO.toEntity(dto);
+
+        entity.setUserId(temporaryUserId);
+
+        List<TodoEntity> entities = service.update(entity);
+        List<TodoDTO> dtos = entities.stream().map(TodoDTO::new).collect(Collectors.toList());
+
+        ResponseDTO<TodoDTO> response = ResponseDTO.<TodoDTO>builder().data(dtos).build();
+
+
+        return ResponseEntity.ok().body(response);
+    }
 
     @PostMapping("")
     public ResponseEntity<?> createTodo(@RequestBody TodoDTO dto) {
@@ -45,5 +70,10 @@ public class TodoController {
             ResponseDTO<TodoDTO> response = ResponseDTO.<TodoDTO>builder().error(error).build();
             return ResponseEntity.badRequest().body(response);
         }
+    }
+
+    @DeleteMapping("/{id}")
+    public List<TodoEntity> delete(@PathVariable("id") String userId) {
+        return service.delete(userId);
     }
 }

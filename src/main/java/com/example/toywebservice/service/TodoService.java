@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,4 +33,30 @@ public class TodoService {
             throw new RuntimeException("unknown getUserId");
         }
     }
+
+    public List<TodoEntity> retrieve(final String userId) {
+        return repository.findByUserId(userId);
+    }
+
+    public List<TodoEntity> update(final TodoEntity entity) {
+        validate(entity);
+        final Optional<TodoEntity> original = repository.findById(entity.getId());
+
+        original.ifPresent(todo -> {
+            todo.setTitle(entity.getTitle());
+            todo.setDone(entity.isDone());
+
+            repository.save(todo);
+        });
+        return retrieve(entity.getUserId());
+    }
+
+    public List<TodoEntity> delete(final String userId) {
+         Optional<TodoEntity> original = repository.findById(userId);
+
+        original.ifPresent(repository::delete);
+
+        return retrieve(original.get().getId());
+    }
+
 }

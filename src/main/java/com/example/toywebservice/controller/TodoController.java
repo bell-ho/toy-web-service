@@ -6,6 +6,7 @@ import com.example.toywebservice.model.TodoEntity;
 import com.example.toywebservice.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,12 +32,13 @@ public class TodoController {
 
 
     @PutMapping
-    public ResponseEntity<?> updateTodo(@RequestBody TodoDTO dto) {
-        String temporaryUserId = "temporary-user";
+    public ResponseEntity<?> updateTodo(
+            @AuthenticationPrincipal String userId,
+            @RequestBody TodoDTO dto) {
 
         TodoEntity entity = TodoDTO.toEntity(dto);
 
-        entity.setUserId(temporaryUserId);
+        entity.setUserId(userId);
 
         List<TodoEntity> entities = service.update(entity);
         List<TodoDTO> dtos = entities.stream().map(TodoDTO::new).collect(Collectors.toList());
@@ -48,15 +50,16 @@ public class TodoController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createTodo(@RequestBody TodoDTO dto) {
+    public ResponseEntity<?> createTodo(
+            @AuthenticationPrincipal String userId,
+            @RequestBody TodoDTO dto) {
         try {
-            String temporaryUserId = "temporary-user";
 
             TodoEntity entity = TodoDTO.toEntity(dto);
 
             entity.setId(null);
 
-            entity.setUserId(temporaryUserId);
+            entity.setUserId(userId);
 
             List<TodoEntity> entities = service.create(entity);
 
@@ -73,7 +76,10 @@ public class TodoController {
     }
 
     @DeleteMapping("/{id}")
-    public List<TodoEntity> delete(@PathVariable("id") String userId) {
+    public List<TodoEntity> delete(
+            @PathVariable("id") @AuthenticationPrincipal String userId
+            ) {
+
         return service.delete(userId);
     }
 }

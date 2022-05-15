@@ -1,5 +1,5 @@
 ### GET
-GET http://localhost:8080/todo/test
+GET http://localhost:8080/todo
 
 ### Post
 POST http://localhost:8080/todo
@@ -8,3 +8,15 @@ Content-Type: application/json
 {
   "title": "111"
 }
+
+### Put
+PUT http://localhost:8080/todo/update
+Content-Type: application/json
+
+{
+  "id" : "4028b78b80c387ea0180c3883f330000",
+  "title" : "ddd"
+}
+
+### Delete
+DELETE http://localhost:8080/todo/4028b78b80c3927a0180c392d3e30001

@@ -14,9 +14,28 @@ PUT http://localhost:8080/todo/update
 Content-Type: application/json
 
 {
-  "id" : "4028b78b80c387ea0180c3883f330000",
-  "title" : "ddd"
+  "id": "4028b78b80c387ea0180c3883f330000",
+  "title": "ddd"
 }
 
 ### Delete
 DELETE http://localhost:8080/todo/4028b78b80c3927a0180c392d3e30001
+
+### Post
+POST http://localhost:8080/auth/signup
+Content-Type: application/json
+
+{
+  "email": "dd3",
+  "username": "111",
+  "password": "1"
+}
+
+### Post
+POST http://localhost:8080/auth/signin
+Content-Type: application/json
+
+{
+  "email": "dd3",
+  "password": "1"
+}
